@@ -7,30 +7,25 @@ const initialState = { note:"", keywords: [], keyword: "", color: "btn-primary",
 
 export const Home = ({ user, setUser }) => {
 
-    const [ showTitle, setShowTitle ] = useState(true);
-    const [ values, setValues ] = useState(initialState);
+    const [ action, setAction ] = useState("create");
+    const [ inputValues, setInputValues ] = useState(initialState);
     const [ message, setMessage ] = useState(null);
-    const [ showCreator, setShowCreator ] = useState(true);
     const [ notes, setNotes ] = useState([]);
 
     useEffect( async () => {
-        if (!user.id && !user.loading) {
+        if ( !user.id && !user.loading ) {
             let notesStorage = JSON.parse(localStorage.getItem("notes")) || [];
             setNotes(notesStorage);
         }
-        else if (user.id && !user.loading){
+        else if ( user.id && !user.loading ){
             let savedNotes = [];
             const querySnapshot = await firebaseFirestore.collection(`${user.id}/backend/notes`).get();
-            querySnapshot.forEach(doc => {
+            querySnapshot.forEach( doc => {
                 savedNotes.push({ id: doc.id, ...doc.data() });
             });
             setNotes(savedNotes);
         }
-    }, [user])
-
-    const changeShowActions = () => {
-        setShowCreator(!showCreator);
-    }
+    }, [user]);
 
     const showMessage = (type, message) => {
         setMessage({ type, message });
@@ -43,28 +38,21 @@ export const Home = ({ user, setUser }) => {
         <div className="container-fluid bg-light animate__animated animate__fadeIn animate__faster" style={{minHeight:"94vh", overflowX:"hidden"}}>
             <div className="container py-3">
                 <div className="row">
-
                     <div className="col-12 col-md-6 col-lg-6">
                         {
-                            ( !showTitle ) ? ( <div className="alert alert-success">Editing note</div> ) :
-                            (
-                                <div className="d-inline-flex align-items-center justify-content-between w-100 mb-3">
-                                    <h4 className="mb-0">Home</h4>
-                                    <button type="button" className="btn btn-secondary" onClick={changeShowActions}>
-                                        <i className="fas fa-plus"/>
-                                    </button>
-                                </div>
-                            )
+                            ( action == "create" ) && ( <h4 className="mb-3">Home</h4> )
                         }
-                                              
-                        { ( message ) && ( <div className={`alert alert-${message.type} animate__animated animate__fadeIn animate__faster`} role="alert">{message.message}</div>) }
-                        <NoteCreator user={user} setUser={setUser} showCreator={showCreator} setShowCreator={setShowCreator} notes={notes} setNotes={setNotes} showMessage={showMessage} values={values} setValues={setValues} setShowTitle={setShowTitle}/>
+                        {
+                            ( action == "edit" ) && ( <div className="alert alert-success">Editing note</div> )
+                        }
+                        { 
+                            ( message ) && ( <div className={`alert  animate__animated animate__fadeIn animate__faster alert-${message.type}`} role="alert">{message.message}</div> ) 
+                        }
+                        <NoteCreator user={user} inputValues={inputValues} setInputValues={setInputValues} notes={notes} setNotes={setNotes} showMessage={showMessage} action={action} setAction={setAction}/>
                     </div> 
-
                     <div className="col-12 col-md-6 col-lg-6">
-                        <NoteGroup user={user} notes={notes} setNotes={setNotes} showMessage={showMessage} values={values} setValues={setValues} setShowTitle={setShowTitle}/>
+                        <NoteGroup user={user} setUser={setUser} inputValues={inputValues} setInputValues={setInputValues} notes={notes} setNotes={setNotes} showMessage={showMessage} action={action} setAction={setAction}/>
                     </div>   
-
                 </div>
             </div>            
         </div>

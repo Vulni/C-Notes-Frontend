@@ -16,10 +16,10 @@ const colors = [
     "bg-watermelon"
 ]
 
-export const ButtonGroup = ({ values, setValues }) => {
+export const ButtonGroup = ({ inputValues, setInputValues }) => {
 
     const changeColor = (e) => {
-        setValues({...values, color: e.target.title });
+        setInputValues({...inputValues, color: e.target.title });
     }
 
     return (

@@ -2,10 +2,10 @@ import React from 'react'
 import { firebaseFirestore } from '../db/db';
 import { KeywordGroup } from './KeywordGroup'
 
-export const Note = ({ note, notes, setNotes, user, showMessage, confirmation, setConfirmation, values, setValues, setShowTitle }) => {
+export const Note = ({ note, notes, setNotes, user, showMessage, confirmation, setConfirmation, setAction, setInputValues }) => {
 
     const deleteNote = async () => {
-        if(!user.id){
+        if( !user.id ){
             let newNotes = notes.filter( nt => nt.id != note.id );
             setNotes(newNotes);
             localStorage.setItem("notes", JSON.stringify(newNotes));
@@ -39,7 +39,7 @@ export const Note = ({ note, notes, setNotes, user, showMessage, confirmation, s
             </div>
             <div className="card-footer pt-0">
                 {
-                    ( confirmation != note.id ) ? ( <KeywordGroup values={note} notes={notes} setValues={setNotes} deleteFromNotes={true} inputValues={values} setInputValues={setValues} setShowTitle={setShowTitle}/> ) :
+                    ( confirmation != note.id ) ? ( <KeywordGroup inputValues={note} setInputValues={setInputValues} showDeleteOption={false} setAction={setAction}/> ) :
                     (
                         <>
                             <div className="mt-3 mb-2 animate__animated animate__fadeIn animate__faster">Are you sure?</div>
